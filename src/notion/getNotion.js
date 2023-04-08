@@ -38,7 +38,11 @@ const getNotion = {
 
       if (isLink)
         return (
-          <Link key={index} className={classType} href={isLink[1]}>
+          <Link
+            key={index}
+            className={`${classType} mx-[1px]`}
+            href={isLink[1]}
+          >
             {word}
           </Link>
         );

@@ -3,15 +3,6 @@ import getNotion from "./getNotion";
 import { parsePageId } from "notion-utils";
 import pageConfig from "@/page-config";
 
-const Picture = ({ block }) => {
-  console.log("Picture: ", block);
-  const src = encodeURIComponent(block?.properties?.source?.[0]);
-  const params = `?table=${block.parent_table}&id=${block.id}&cache=v2`;
-  const fullSrc = `https://notion.so/image/${src}${params}`;
-  if (src) return <img alt="hehe" src={fullSrc} />;
-  return "";
-};
-
 export default function NotionRenderer({
   notionMap = { block: {}, collection_view: {}, collection: {} },
 }) {
@@ -21,6 +12,14 @@ export default function NotionRenderer({
   const blockLists = getNotion.blocksList(block);
 
   console.log(blockLists);
+
+  const Picture = ({ block }) => {
+    const src = encodeURIComponent(block?.properties?.source?.[0]);
+    const params = `?table=${block.parent_table}&id=${block.id}&cache=v2`;
+    const fullSrc = `https://notion.so/image/${src}${params}`;
+    if (src) return <img alt="hehe" src={fullSrc} />;
+    return "";
+  };
 
   const Header = ({ block }) => {
     if (block.type === "header")
@@ -44,6 +43,16 @@ export default function NotionRenderer({
     );
   };
 
+  const Button = ({ block }) => {
+    const titleDisplay = getNotion.titleMapper(block);
+    const style = block?.format?.block_color;
+    return (
+      <button type="button" className={`akarna-button ${style}`}>
+        {titleDisplay}
+      </button>
+    );
+  };
+
   const Column = ({ block }) => {
     const width = `calc(100% * ${block?.format?.column_ratio || 1})`;
     return (
@@ -59,7 +68,7 @@ export default function NotionRenderer({
   const Columns = ({ block }) => {
     const content = block?.content;
     return (
-      <div className="flex gap-1 border-2 border-red-200 w-full">
+      <div className="flex gap-1 w-full">
         {content?.map((i) => {
           const block = blockLists.find((x) => x.id === i);
           return <Column key={i} block={block} />;
@@ -73,6 +82,8 @@ export default function NotionRenderer({
     else if (`${block.type}`.includes("header"))
       return <Header key={block.id} block={block} />;
     else if (block.type === "column_list") return <Columns block={block} />;
+    else if (block.type === "image") return <Picture block={block} />;
+    else if (block.type === "quote") return <Button block={block} />;
 
     const titleDisplay = getNotion.titleMapper(block);
 
