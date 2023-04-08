@@ -77,6 +77,17 @@ export default function NotionRenderer({
     );
   };
 
+  const Callouts = ({ block }) => {
+    return (
+      <div className="bg-red-100 h-full flex flex-col justify-center p-4">
+        {block?.content?.map((x) => {
+          const block = blockLists.find((i) => i.id === x);
+          return <Block key={x} block={block} />;
+        })}
+      </div>
+    );
+  };
+
   const Block = ({ block }) => {
     if (block.type === "page") return <PageLink block={block} />;
     else if (`${block.type}`.includes("header"))
@@ -84,6 +95,7 @@ export default function NotionRenderer({
     else if (block.type === "column_list") return <Columns block={block} />;
     else if (block.type === "image") return <Picture block={block} />;
     else if (block.type === "quote") return <Button block={block} />;
+    else if (block.type === "callout") return <Callouts block={block} />;
 
     const titleDisplay = getNotion.titleMapper(block);
 
