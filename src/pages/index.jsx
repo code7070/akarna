@@ -25,7 +25,6 @@ export default function Home({ page = {} }) {
     <>
       <PageHead />
       <div className="max-w-2xl my-8 mx-auto border-2 border-slate-200 rounded-lg p-4">
-        heeheheh
         <NotionRenderer notionMap={page} />
       </div>
     </>
