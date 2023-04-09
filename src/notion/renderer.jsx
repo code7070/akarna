@@ -1,6 +1,7 @@
 import Link from "next/link";
 import getNotion from "./getNotion";
 import { parsePageId } from "notion-utils";
+``;
 import pageConfig from "@/page-config";
 
 export default function NotionRenderer({
@@ -11,7 +12,9 @@ export default function NotionRenderer({
   const { content: pageContent, id: parentId } = getNotion.pageContent(block);
   const blockLists = getNotion.blocksList(block);
 
-  console.log(blockLists);
+  // console.log(blockLists);
+
+  const Wrapper = ({ children }) => <div className="mb-8">{children}</div>;
 
   const Picture = ({ block }) => {
     const src = encodeURIComponent(block?.properties?.source?.[0]);
@@ -22,13 +25,15 @@ export default function NotionRenderer({
   };
 
   const Header = ({ block }) => {
+    let view = <div>{block?.properties?.title[0]}</div>;
     if (block.type === "header")
-      return <h2 className="text-2xl">{block?.properties?.title[0]}</h2>;
+      view = <h2 className="text-2xl">{block?.properties?.title[0]}</h2>;
     else if (block.type === "sub_header")
-      return <h3 className="text-xl">{block?.properties?.title[0]}</h3>;
+      view = <h3 className="text-xl">{block?.properties?.title[0]}</h3>;
     else if (block.type === "sub_sub_header")
-      return <h4 className="text-lg">{block?.properties?.title[0]}</h4>;
-    return <div>{block?.properties?.title[0]}</div>;
+      view = <h4 className="text-lg">{block?.properties?.title[0]}</h4>;
+
+    return <Wrapper>{view}</Wrapper>;
   };
 
   const PageLink = ({ block }) => {
@@ -68,28 +73,33 @@ export default function NotionRenderer({
   const Columns = ({ block }) => {
     const content = block?.content;
     return (
-      <div className="flex gap-1 w-full">
-        {content?.map((i) => {
-          const block = blockLists.find((x) => x.id === i);
-          return <Column key={i} block={block} />;
-        })}
-      </div>
+      <Wrapper>
+        <div className="flex gap-1 w-full">
+          {content?.map((i) => {
+            const block = blockLists.find((x) => x.id === i);
+            return <Column key={i} block={block} />;
+          })}
+        </div>
+      </Wrapper>
     );
   };
 
   const Callouts = ({ block }) => {
     return (
-      <div className="bg-red-100 h-full flex flex-col justify-center p-4">
-        {block?.content?.map((x) => {
-          const block = blockLists.find((i) => i.id === x);
-          return <Block key={x} block={block} />;
-        })}
-      </div>
+      <Wrapper>
+        <div className="bg-red-100 h-full flex flex-col justify-center p-4">
+          {block?.content?.map((x) => {
+            const block = blockLists.find((i) => i.id === x);
+            return <Block key={x} block={block} />;
+          })}
+        </div>
+      </Wrapper>
     );
   };
 
   const Block = ({ block }) => {
-    if (block.type === "page") return <PageLink block={block} />;
+    // if (block.type === "page") return <PageLink block={block} />;
+    if (block.type === "page") return "";
     else if (`${block.type}`.includes("header"))
       return <Header key={block.id} block={block} />;
     else if (block.type === "column_list") return <Columns block={block} />;
@@ -99,7 +109,11 @@ export default function NotionRenderer({
 
     const titleDisplay = getNotion.titleMapper(block);
 
-    return <div>{titleDisplay}</div>;
+    return (
+      <Wrapper>
+        <div>{titleDisplay}</div>
+      </Wrapper>
+    );
   };
 
   return pageContent?.map((i) => {

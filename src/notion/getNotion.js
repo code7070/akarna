@@ -1,3 +1,5 @@
+import pageConfig from "@/page-config";
+import { isArrayLen, slugify } from "@/utils/helpers";
 import Link from "next/link";
 import { parsePageId } from "notion-utils";
 
@@ -55,6 +57,26 @@ const getNotion = {
     });
 
     return view;
+  },
+  pageMap: (block = {}) => {
+    if (!block) return null;
+    const obval = Object.values(block);
+    const pageId = parsePageId(pageConfig.homeId);
+    if (obval.length < 1) return null;
+    return obval
+      .filter(
+        (i) => i?.value?.type === "page" && i?.value?.parent_id === pageId
+      )
+      .map((i) => i.value);
+  },
+  pageMapNav: (block = {}) => {
+    const blockmap = getNotion.pageMap(block);
+    if (isArrayLen(blockmap))
+      return blockmap.map((blockItem) => {
+        const name = blockItem?.properties?.title?.[0][0] || null;
+        return { pageId: blockItem.id || null, name, path: slugify(name) };
+      });
+    return null;
   },
 };
 

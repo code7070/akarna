@@ -1,6 +1,9 @@
 import NotionRenderer from "@/notion/renderer";
 import pageConfig from "@/page-config";
+import { selectPage } from "@/store/pageSlice";
+import { useRouter } from "next/router";
 import { NotionAPI } from "notion-client";
+import { useSelector } from "react-redux";
 
 export function getStaticPaths() {
   return {
@@ -23,9 +26,17 @@ export async function getStaticProps(context) {
 }
 
 export default function SubPage({ notionPage }) {
+  const { back } = useRouter();
+  const pageg = useSelector(selectPage.page);
+  console.log("[page]: ", { pageg });
   return (
     <div className="max-w-xl mx-auto">
-      <h1>Sub Page</h1>
+      <div className="flex bg-primary justify-between">
+        <button className="btn btn-secondary" type="button" onClick={back}>
+          Home
+        </button>
+        <h1>Sub Page</h1>
+      </div>
       <NotionRenderer notionMap={notionPage} />
     </div>
   );
