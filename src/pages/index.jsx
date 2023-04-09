@@ -3,25 +3,21 @@ import { parsePageId } from "notion-utils";
 import NotionRenderer from "@/notion/renderer";
 import { NotionAPI } from "notion-client";
 import pageConfig from "@/page-config";
-import { setHomepage, setPageNav } from "@/store/pageSlice";
+import { selectPage } from "@/store/pageSlice";
 import getNotion from "@/notion/getNotion";
-import { wrapper } from "@/store";
+import { useSelector } from "react-redux";
 
 const pageTarget = parsePageId(pageConfig.homeId);
 
-export const getStaticProps = wrapper.getStaticProps(
-  (store) => async (context) => {
-    const notion = new NotionAPI();
-    const res = await notion
-      .getPage(pageTarget)
-      .then((res) => res)
-      .catch((res) => null);
-    const pageNav = getNotion.pageMapNav(res.block);
-    store.dispatch(setHomepage(res));
-    store.dispatch(setPageNav(pageNav));
-    return { props: { page: res } };
-  }
-);
+export const getStaticProps = async (context) => {
+  const notion = new NotionAPI();
+  const res = await notion
+    .getPage(pageTarget)
+    .then((res) => res)
+    .catch((res) => null);
+  const pageNav = getNotion.pageMapNav(res.block);
+  return { props: { page: res } };
+};
 
 let num = 1;
 

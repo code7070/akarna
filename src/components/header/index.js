@@ -1,18 +1,21 @@
-import { selectPage } from "@/store/pageSlice";
+import { Inter } from "next/font/google";
 import Link from "next/link";
-import { useSelector } from "react-redux";
+
+const font = Inter({ subsets: ["latin"] });
 
 export default function Header({ className }) {
-  const nav = useSelector(selectPage.navigation) || [];
+  const nav = [];
 
   return (
     <header className={`sticky top-0 z-50 bg-white ${className}`}>
-      <div className="max-w-3xl mx-auto flex justify-between p-4">
-        <div className="font-bold text-lg">ÀKARNÁ</div>
-        <div className="flex justify-end gap-2">
+      <div className="max-w-3xl mx-auto flex items-center justify-between p-4">
+        <Link href="/" className="font-bold text-xl">
+          ÀKARNÁ
+        </Link>
+        <div className={`flex justify-end ${font.className}`}>
           {nav.map((i) => (
             <Link
-              className="opacity-40 hover:underline hover:opacity-80"
+              className="opacity-40 hover:bg-slate-100 hover:opacity-80 p-3 text-xs"
               key={i.path}
               href={i.path}
             >

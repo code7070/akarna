@@ -11,15 +11,24 @@ const rootReducer = combineReducers({
 const makeConfiguredStore = () =>
   configureStore({
     reducer: rootReducer,
+    devTools: true,
   });
 
+// const makeStore = () =>
+//   configureStore({
+//     reducer: {
+//       [pageSlice.name]: pageSlice.reducer,
+//     },
+//     devTools: true,
+//   });
+
 const makeStore = () => {
-  const isServer = typeof window === "undefined";
+  const isServer = typeof window !== "undefined";
   if (isServer) return makeConfiguredStore();
   else {
     const persistConfig = {
-      key: "nextjs",
-      whitelist: ["auth"], // make sure it does not clash with server keys
+      key: "next js",
+      whitelist: ["auth"],
       storage,
     };
     const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -27,7 +36,7 @@ const makeStore = () => {
       reducer: persistedReducer,
       devTools: process.env.NODE_ENV !== "production",
     });
-    store.__persistor = persistStore(store); // Nasty hack
+    store.__persistor = persistStore(store);
     return store;
   }
 };

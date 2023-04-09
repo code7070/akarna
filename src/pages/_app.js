@@ -1,13 +1,12 @@
 import { Playfair_Display } from "next/font/google";
 import "@/styles/globals.scss";
-import { wrapper } from "@/store";
 import { useRouter } from "next/router";
 import nProgress from "nprogress";
 import { useEffect } from "react";
 import Header from "@/components/header";
-// import "nprogress/"
+import "nprogress/nprogress.css";
 
-const font = Playfair_Display({ subsets: ["latin"] });
+const playfair = Playfair_Display({ subsets: ["latin"] });
 
 function App({ Component, pageProps }) {
   const router = useRouter();
@@ -18,14 +17,16 @@ function App({ Component, pageProps }) {
     router.events.on("routeChangeComplete", nProgress.done);
   }, [router]);
 
+  const fontsClass = `${playfair.className}`;
+
   return (
     <>
-      <Header className={font.className} />
-      <main className={font.className}>
+      <Header className={fontsClass} />
+      <main className={fontsClass}>
         <Component {...pageProps} />
       </main>
     </>
   );
 }
 
-export default wrapper.withRedux(App);
+export default App;

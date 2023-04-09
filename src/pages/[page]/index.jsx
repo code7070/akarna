@@ -12,23 +12,27 @@ export function getStaticPaths() {
   };
 }
 
-export async function getStaticProps(context) {
-  const { params } = context;
+export const getStaticProps = getStaticProps(async (context) => {
+  const { page } = context.params;
+
+  // const match = store.getState((state) => selectPage(state, page));
 
   const notion = new NotionAPI();
-  const notionPage = await notion.getPage(params.page);
+  // const notionPage = await notion.getPage(page);
 
   return {
     props: {
-      notionPage,
+      notionPage: {},
+      // match,
     },
   };
-}
+});
 
-export default function SubPage({ notionPage }) {
+export default function SubPage(props) {
   const { back } = useRouter();
-  const pageg = useSelector(selectPage.page);
-  console.log("[page]: ", { pageg });
+  const sels = useSelector(selectPage.home);
+  const selss = useSelector(selectPage.navigation);
+  console.log("SUB: ", { props, sels, selss });
   return (
     <div className="max-w-xl mx-auto">
       <div className="flex bg-primary justify-between">
@@ -37,7 +41,7 @@ export default function SubPage({ notionPage }) {
         </button>
         <h1>Sub Page</h1>
       </div>
-      <NotionRenderer notionMap={notionPage} />
+      <NotionRenderer notionMap={props.notionPage} />
     </div>
   );
 }

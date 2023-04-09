@@ -3,8 +3,8 @@ import { HYDRATE } from "next-redux-wrapper";
 
 const initialState = {
   page: `falses`,
-  homepage: false,
-  navigation: false,
+  homepage: null,
+  navigation: null,
 };
 
 export const pageSlice = createSlice({
@@ -39,5 +39,11 @@ export const selectPage = {
   home: (state) => state.page.homepage,
   page: (state) => state.page.page,
   navigation: (state) => state.page.navigation,
+  matchNav: (state, param2) => {
+    let page = state?.page?.navigation;
+    const finder = page?.find((i) => i.path === param2);
+    if (finder) page = finder;
+    return { page };
+  },
 };
 export default pageSlice.reducer;
