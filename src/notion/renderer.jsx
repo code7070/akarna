@@ -98,8 +98,8 @@ export default function NotionRenderer({
   };
 
   const Block = ({ block }) => {
-    // if (block.type === "page") return <PageLink block={block} />;
-    if (block.type === "page") return "";
+    if (block.type === "page") return <PageLink block={block} />;
+    // if (block.type === "page") return "";
     else if (`${block.type}`.includes("header"))
       return <Header key={block.id} block={block} />;
     else if (block.type === "column_list") return <Columns block={block} />;

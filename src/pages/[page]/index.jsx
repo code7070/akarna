@@ -1,26 +1,36 @@
 import { useNotionProvider } from "@/context/notion";
+import getNotion from "@/notion/getNotion";
 import NotionRenderer from "@/notion/renderer";
 import pageConfig from "@/page-config";
+import { notionAPI } from "@/utils/notion-api";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 
-export function getStaticPaths() {
-  return {
-    paths: [{ params: { page: pageConfig.homeId } }],
-    fallback: true,
-  };
+export async function getStaticPaths() {
+  const page = await notionAPI.getPage(pageConfig.homeId);
+  const pageMap = getNotion.pageMapNav(page?.block);
+
+  const paths = pageMap.map((i) => ({ params: { page: i.path } }));
+  console.log("STATIC PATHS: ", paths);
+  return { paths, fallback: false };
 }
 
-export const getStaticProps = async (context) => {
+export async function getStaticProps(context) {
   const { page } = context.params;
+
+  const res = await notionAPI.getPage(pageConfig.homeId);
+  const pageMap = getNotion.pageMapNav(res?.block);
+
+  const target = pageMap.find((i) => i.path === page);
+  console.log("STATIC PROPS: ", target);
+  const notionPage = await notionAPI.getPage(target?.pageId);
 
   return {
     props: {
-      notionPage: {},
+      notionPage,
       page,
     },
   };
-};
+}
 
 export default function SubPage(props) {
   const { back } = useRouter();
@@ -30,12 +40,6 @@ export default function SubPage(props) {
 
   return (
     <div className="max-w-xl mx-auto">
-      <div className="flex bg-primary justify-between">
-        <button className="btn btn-secondary" type="button" onClick={back}>
-          Home
-        </button>
-        <h1>Sub Page</h1>
-      </div>
       <NotionRenderer notionMap={props.notionPage} />
     </div>
   );

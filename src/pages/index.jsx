@@ -8,12 +8,8 @@ import { notionAPI } from "@/utils/notion-api";
 
 export const getStaticProps = async (context) => {
   const res = await notionAPI.getPage(pageConfig.homeId);
-  const pageNav = getNotion.pageMapNav(res.block);
-
   return { props: { page: res } };
 };
-
-let num = 1;
 
 export default function Home({ page = {} }) {
   const [notion, setNotion] = useNotionProvider();
@@ -33,7 +29,6 @@ export default function Home({ page = {} }) {
   return (
     <>
       <PageHead />
-
       <div className="max-w-3xl my-8 mx-auto border-2 border-slate-200 rounded-lg p-4">
         <NotionRenderer notionMap={page} />
       </div>
