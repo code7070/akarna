@@ -1,5 +1,5 @@
 export const isArrayLen = (arr = []) =>
-  typeof arr === "object" && arr.length > 0;
+  typeof arr === "object" && arr?.length > 0;
 
 export const slugify = (str = "") =>
   `${str}`

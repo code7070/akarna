@@ -1,9 +1,8 @@
+import { useNotionProvider } from "@/context/notion";
 import NotionRenderer from "@/notion/renderer";
 import pageConfig from "@/page-config";
-import { selectPage } from "@/store/pageSlice";
 import { useRouter } from "next/router";
-import { NotionAPI } from "notion-client";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export function getStaticPaths() {
   return {
@@ -12,27 +11,23 @@ export function getStaticPaths() {
   };
 }
 
-export const getStaticProps = getStaticProps(async (context) => {
+export const getStaticProps = async (context) => {
   const { page } = context.params;
-
-  // const match = store.getState((state) => selectPage(state, page));
-
-  const notion = new NotionAPI();
-  // const notionPage = await notion.getPage(page);
 
   return {
     props: {
       notionPage: {},
-      // match,
+      page,
     },
   };
-});
+};
 
 export default function SubPage(props) {
   const { back } = useRouter();
-  const sels = useSelector(selectPage.home);
-  const selss = useSelector(selectPage.navigation);
-  console.log("SUB: ", { props, sels, selss });
+  const [notion] = useNotionProvider();
+
+  console.log("SUB: ", { notion, props });
+
   return (
     <div className="max-w-xl mx-auto">
       <div className="flex bg-primary justify-between">

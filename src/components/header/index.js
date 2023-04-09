@@ -1,10 +1,12 @@
+import { useNotionProvider } from "@/context/notion";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 
 const font = Inter({ subsets: ["latin"] });
 
 export default function Header({ className }) {
-  const nav = [];
+  const [notion] = useNotionProvider();
+  const nav = notion.navigation || [];
 
   return (
     <header className={`sticky top-0 z-50 bg-white ${className}`}>

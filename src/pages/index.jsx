@@ -1,29 +1,34 @@
 import PageHead from "./PageHead";
-import { parsePageId } from "notion-utils";
 import NotionRenderer from "@/notion/renderer";
-import { NotionAPI } from "notion-client";
 import pageConfig from "@/page-config";
-import { selectPage } from "@/store/pageSlice";
 import getNotion from "@/notion/getNotion";
-import { useSelector } from "react-redux";
-
-const pageTarget = parsePageId(pageConfig.homeId);
+import { useNotionProvider } from "@/context/notion";
+import { useEffect } from "react";
+import { notionAPI } from "@/utils/notion-api";
 
 export const getStaticProps = async (context) => {
-  const notion = new NotionAPI();
-  const res = await notion
-    .getPage(pageTarget)
-    .then((res) => res)
-    .catch((res) => null);
+  const res = await notionAPI.getPage(pageConfig.homeId);
   const pageNav = getNotion.pageMapNav(res.block);
+
   return { props: { page: res } };
 };
 
 let num = 1;
 
 export default function Home({ page = {} }) {
+  const [notion, setNotion] = useNotionProvider();
+
   //
+  useEffect(() => {
+    if (page && setNotion) {
+      console.log("RENDER-");
+      const navigation = getNotion.pageMapNav(page?.block);
+      setNotion({ homepage: page, navigation });
+    }
+  }, [page, setNotion]);
   //
+
+  console.log("HOME NOTION: ", notion);
 
   return (
     <>
